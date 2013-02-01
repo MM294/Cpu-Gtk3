@@ -87,7 +87,29 @@ class main:
         
         return path + label
     
-    
+
+    def gpuinfo(self, var):
+        if var == 'gpuname':
+		return (subprocess.Popen("lspci | grep 'VGA' | cut -d ':' -f3 | cut -d '(' -f 1", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+        elif var == 'glvendor':
+		return (subprocess.Popen("glxinfo | grep 'OpenGL vendor string:' | sed -n '1p' | cut -d ':' -f 2", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+        elif var == 'glrenderer':
+		return (subprocess.Popen("glxinfo | grep 'OpenGL renderer string:' | sed -n '1p' | cut -d ':' -f 2", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+        elif var == 'glversion':
+		return (subprocess.Popen("glxinfo | grep 'OpenGL version string:' | sed -n '1p' | cut -d ':' -f 2", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+        elif var == 'activeres':
+		return (subprocess.Popen("xdpyinfo | grep 'dimensions:' | cut -d ':' -f 2", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+	elif var == 'gfxlogo':
+		vendor = (subprocess.Popen("lspci | grep 'VGA' | cut -d ':' -f3 | cut -d '(' -f 1", stdout=subprocess.PIPE, shell=True).stdout.read()).lower()
+		if vendor.find("intel") != -1:
+			return('data/gfx/intel.png')
+		elif vendor.find("ati technologies") != -1:
+			return('data/gfx/amd.png')
+		elif vendor.find("nvidia") != -1:
+			return('data/gfx/nvidia.png')
+		elif vendor.find("amd") != -1:
+			return('data/gfx/amd.png')
+
     
     def cpuinfo(self, var, core):
         info = self.readfile("/proc/cpuinfo")
@@ -122,6 +144,11 @@ class main:
                 return '64-bit'
             else:
                 return '32-bit'
+        elif var == 'kvm':
+            if re.findall(' svm(?![-a-zA-Z0-9_])|vmx(?![-a-zA-Z0-9_])', re.findall("flags\s*:(.*)",info)[core]):
+                return True
+            else:
+                return False
             
 
 
@@ -229,7 +256,7 @@ class CPUG:
         add = Gtk.ListStore(str)
         
         for i in range(int(main().cpuinfo("coresnum", 'foo'))):
-            add.append(["cpu #" + str(i)])
+            add.append(["Cpu #" + str(i)])
             
             
         self.box.set_model(add)
@@ -241,6 +268,8 @@ class CPUG:
         
         self.ram_update()
         GObject.timeout_add(1000, self.ram_update) # Update Free & Used RAM every 1 second
+
+	self.gpu_update()
         
         
         # Motherboard tab
@@ -311,13 +340,21 @@ class CPUG:
         self.wTree.get_object("coresnum").set_text(main().cpuinfo("coresnum", 'foo'))
         self.wTree.get_object("flags").set_text(main().cpuinfo("flags", index))
         self.wTree.get_object("width").set_text(main().cpuinfo("width", index))
+        self.wTree.get_object("kvm").set_active(main().cpuinfo("kvm", index))
         self.wTree.get_object("l1data").set_text(main().sysdevcpu(index, 1, 'Data'))
         self.wTree.get_object("l1inst").set_text(main().sysdevcpu(index, 1, 'Instruction'))
         self.wTree.get_object("l2").set_text(main().sysdevcpu(index, 2, 'Unified'))
         self.wTree.get_object("l3").set_text(main().sysdevcpu(index, 3, 'Unified'))
-        
-        
-        
+
+    def gpu_update(self):
+      
+        # GPU tab
+        self.wTree.get_object("gpuname").set_text(main().gpuinfo("gpuname"))
+        self.wTree.get_object("glvendor").set_text(main().gpuinfo("glvendor"))
+        self.wTree.get_object("glrenderer").set_text(main().gpuinfo("glrenderer"))
+        self.wTree.get_object("glversion").set_text(main().gpuinfo("glversion"))
+        self.wTree.get_object("activeres").set_text(main().gpuinfo("activeres"))
+        self.wTree.get_object("gpuimage").set_from_file(main().gpuinfo("gfxlogo"))       
         
     def kill(self, widget):
         print "Quit"
