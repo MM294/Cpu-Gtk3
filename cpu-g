@@ -241,6 +241,7 @@ class main:
 		diskmodel = (subprocess.Popen("cat /sys/block/" + diskname + "/device/model", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 		diskvendor = (subprocess.Popen("cat /sys/block/" + diskname + "/device/vendor", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 		diskrevision = (subprocess.Popen("cat /sys/block/" + diskname + "/device/rev", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+		disksectorsize = (subprocess.Popen("cat /sys/block/" + diskname + "/queue/hw_sector_size", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 
 		#get data on partitons on the drive
 		partitionarray = []
@@ -254,7 +255,7 @@ class main:
 					diskmountoptions.append('')
 			partitionarray.append([partitionname, partitionsize, diskmountoptions[2], diskmountoptions[4], diskmountoptions[5]])
 
-		diskarray.append([diskname, disksize,numpartitions,diskmodel,diskvendor,diskrevision, partitionarray])
+		diskarray.append([diskname, disksize,numpartitions,diskmodel,diskvendor,diskrevision,disksectorsize, partitionarray])
 	return diskarray
 
         
@@ -414,23 +415,24 @@ class CPUG:
 	i = drivecombo.get_active()
 
 	for j in range(0, self.anarray[i][2]):
-		partitioncombo.append_text(self.anarray[i][6][j][0])
+		partitioncombo.append_text(self.anarray[i][7][j][0])
 	partitioncombo.set_active(0)
 	#update data with active disk
 	self.wTree.get_object("disksize").set_text(self.blockstoGB(self.anarray[i][1]) + " GB")
 	self.wTree.get_object("diskmodel").set_text(self.anarray[i][3])
 	self.wTree.get_object("diskvendor").set_text(self.anarray[i][4])
 	self.wTree.get_object("diskrev").set_text(self.anarray[i][5])
+	self.wTree.get_object("disksectorsize").set_text(self.anarray[i][6])
 
     def partitioncombochanged(self, partitioncombo, drivecombo):
 	i = drivecombo.get_active()
 	j = partitioncombo.get_active()
 
 	#update data with active partition
-	self.wTree.get_object("partsize").set_text(self.blockstoGB(self.anarray[i][6][j][1]) + " GB")
-	self.wTree.get_object("partmountoptions").set_text(self.anarray[i][6][j][4])
-	self.wTree.get_object("partfstype").set_text(self.anarray[i][6][j][3])
-	self.wTree.get_object("partmount").set_text(self.anarray[i][6][j][2])
+	self.wTree.get_object("partsize").set_text(self.blockstoGB(self.anarray[i][7][j][1]) + " GB")
+	self.wTree.get_object("partmountoptions").set_text(self.anarray[i][7][j][4])
+	self.wTree.get_object("partfstype").set_text(self.anarray[i][7][j][3])
+	self.wTree.get_object("partmount").set_text(self.anarray[i][7][j][2])
 
 
     def blockstoGB(self, blocks):

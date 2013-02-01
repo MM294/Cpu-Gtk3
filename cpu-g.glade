@@ -2,8 +2,6 @@
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkListStore" id="liststore1"/>
-  <object class="GtkTextBuffer" id="modulesbuffer"/>
-  <object class="GtkTextBuffer" id="pcmbuffer"/>
   <object class="GtkWindow" id="main_window">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1611,7 +1609,7 @@
                           <object class="GtkLabel" id="label66">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">15</property>
+                            <property name="margin_left">20</property>
                             <property name="margin_right">5</property>
                             <property name="label" translatable="yes">Vendor:</property>
                           </object>
@@ -1734,7 +1732,42 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkBox" id="box31">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel" id="label73">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">2</property>
+                            <property name="margin_right">5</property>
+                            <property name="label" translatable="yes">Sector Size:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="disksectorsize">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">●</property>
+                            <property name="width_chars">20</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -1993,7 +2026,21 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="box30">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">9</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -2494,7 +2541,7 @@
                   <object class="GtkLabel" id="label37">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">CPU-G 0.9 beta</property>
+                    <property name="label" translatable="yes">CPU-Gtk3 0.1</property>
                     <property name="justify">center</property>
                     <property name="selectable">True</property>
                     <attributes>
@@ -2512,7 +2559,7 @@
                   <object class="GtkLabel" id="label38">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">CPU-G is an application that shows useful information about your CPU, RAM, Motherboard and some general information about your system.</property>
+                    <property name="label" translatable="yes">CPU-Gtk3 is an application that shows useful information about your CPU, RAM, Motherboard and some general information about your system.</property>
                     <property name="wrap">True</property>
                     <property name="selectable">True</property>
                   </object>
@@ -2526,7 +2573,9 @@
                   <object class="GtkLabel" id="label40">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Copyright © 2009 Fotis Tsamis &lt;ftsamis@gmail.com&gt;</property>
+                    <property name="label" translatable="yes">Copyright © 2013 Mike Morley &lt;hairy.palms.19@gmail.com&gt;
+				forked from cpu-g 
+   Copyright © 2009 Fotis Tsamis &lt;ftsamis@gmail.com&gt; </property>
                     <property name="selectable">True</property>
                   </object>
                   <packing>
@@ -2537,13 +2586,13 @@
                 </child>
                 <child>
                   <object class="GtkLinkButton" id="linkbutton1">
-                    <property name="label" translatable="yes">http://cpug.sourceforge.net/</property>
+                    <property name="label" translatable="yes">https://github.com/HairyPalms/Cpu-Gtk3</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="receives_default">True</property>
                     <property name="has_tooltip">True</property>
                     <property name="relief">none</property>
-                    <property name="uri">http://cpug.sourceforge.net/</property>
+                    <property name="uri">https://github.com/HairyPalms/Cpu-Gtk3</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -2584,7 +2633,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0.10000000149011612</property>
-                <property name="label" translatable="yes">CPU-G</property>
+                <property name="label" translatable="yes">CPU-Gtk3</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -2620,5 +2669,7 @@
       </object>
     </child>
   </object>
+  <object class="GtkTextBuffer" id="modulesbuffer"/>
+  <object class="GtkTextBuffer" id="pcmbuffer"/>
   <object class="GtkTextBuffer" id="sndcardbuffer"/>
 </interface>
