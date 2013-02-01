@@ -246,7 +246,9 @@ class main:
 		#get data on partitons on the drive
 		partitionarray = []
 		numpartitions = int(subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
-		for i in range(0, numpartitions):
+		if numpartitions == 0: 
+			partitionarray.append([diskname, disksize, '', 'Empty', ''])
+		for i in range(0, numpartitions):			
 			partitionname = (subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 			partitionsize = float(subprocess.Popen("cat /sys/block/" + diskname + "/" + partitionname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
 			diskmountoptions = (subprocess.Popen("mount | grep '" + partitionname + "' | tr ' ' '\n'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip().split('\n')

@@ -983,6 +983,23 @@
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
+                  <object class="GtkLabel" id="label75">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin_left">20</property>
+                    <property name="label" translatable="yes">GPU</property>
+                    <attributes>
+                      <attribute name="scale" value="1.6000000000000001"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox" id="box3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1020,7 +1037,7 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">6</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -1031,7 +1048,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -1049,7 +1066,7 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">6</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -1229,7 +1246,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
@@ -1243,7 +1260,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
               </object>
@@ -1753,6 +1770,7 @@
                           <object class="GtkEntry" id="disksectorsize">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">●</property>
                             <property name="width_chars">20</property>
                           </object>
@@ -1874,6 +1892,7 @@
                           <object class="GtkEntry" id="partmount">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">●</property>
                             <property name="width_chars">20</property>
                           </object>
@@ -1913,6 +1932,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_right">10</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">●</property>
                           </object>
                           <packing>
@@ -1963,6 +1983,7 @@
                           <object class="GtkEntry" id="partfstype">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">●</property>
                             <property name="width_chars">20</property>
                           </object>
@@ -2001,6 +2022,7 @@
                           <object class="GtkEntry" id="partsize">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="editable">False</property>
                             <property name="invisible_char">●</property>
                             <property name="width_chars">20</property>
                           </object>
@@ -2064,6 +2086,23 @@
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
+                  <object class="GtkLabel" id="label74">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin_left">20</property>
+                    <property name="label" translatable="yes">Alsa:</property>
+                    <attributes>
+                      <attribute name="scale" value="1.6000000000000001"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox" id="box10">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -2102,17 +2141,6 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">6</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparator" id="separator2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -2288,6 +2316,17 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="separator2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
