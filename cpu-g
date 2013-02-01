@@ -110,7 +110,18 @@ class main:
 		elif vendor.find("amd") != -1:
 			return('data/gfx/amd.png')
 
-    
+    def sndinfo(self, var):
+        if var == 'alsaversion':
+		return (subprocess.Popen("cat /proc/asound/version", stdout=subprocess.PIPE, shell=True).stdout.read()).replace('\n','')
+        elif var == 'sndcards':
+		return (subprocess.Popen("lspci | grep 'udio' | cut -d ':' -f 3", stdout=subprocess.PIPE, shell=True).stdout.read())
+        elif var == 'pcm':
+		return (subprocess.Popen("cat /proc/asound/pcm", stdout=subprocess.PIPE, shell=True).stdout.read())
+        elif var == 'modules':
+		return (subprocess.Popen("cat /proc/asound/modules", stdout=subprocess.PIPE, shell=True).stdout.read())
+
+
+   
     def cpuinfo(self, var, core):
         info = self.readfile("/proc/cpuinfo")
         
@@ -270,6 +281,8 @@ class CPUG:
         GObject.timeout_add(1000, self.ram_update) # Update Free & Used RAM every 1 second
 
 	self.gpu_update()
+
+	self.snd_update()
         
         
         # Motherboard tab
@@ -354,7 +367,15 @@ class CPUG:
         self.wTree.get_object("glrenderer").set_text(main().gpuinfo("glrenderer"))
         self.wTree.get_object("glversion").set_text(main().gpuinfo("glversion"))
         self.wTree.get_object("activeres").set_text(main().gpuinfo("activeres"))
-        self.wTree.get_object("gpuimage").set_from_file(main().gpuinfo("gfxlogo"))       
+        self.wTree.get_object("gpuimage").set_from_file(main().gpuinfo("gfxlogo"))    
+
+    def snd_update(self):
+      
+        # Sound tab
+        self.wTree.get_object("alsaversion").set_text(main().sndinfo("alsaversion"))
+        self.wTree.get_object("sndcardbuffer").set_text(main().sndinfo("sndcards"))
+        self.wTree.get_object("pcmbuffer").set_text(main().sndinfo("pcm"))
+        self.wTree.get_object("modulesbuffer").set_text(main().sndinfo("modules"))
         
     def kill(self, widget):
         print "Quit"
