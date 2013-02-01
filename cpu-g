@@ -231,6 +231,32 @@ class main:
         values['used'] = values['total'] - values['free']
         
         return values
+
+    def diskinfo(self):
+	numdisks = int(subprocess.Popen("ls /sys/block/ | grep -e 'sd' -e 'sr' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
+	diskarray = []
+	for i in range(0, numdisks):
+		diskname = (subprocess.Popen("ls /sys/block/ | grep -e 'sd' -e 'sr' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+		disksize = float(subprocess.Popen("cat /sys/block/" + diskname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
+		diskmodel = (subprocess.Popen("cat /sys/block/" + diskname + "/device/model", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+		diskvendor = (subprocess.Popen("cat /sys/block/" + diskname + "/device/vendor", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+		diskrevision = (subprocess.Popen("cat /sys/block/" + diskname + "/device/rev", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+
+		#get data on partitons on the drive
+		partitionarray = []
+		numpartitions = int(subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
+		for i in range(0, numpartitions):
+			partitionname = (subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+			partitionsize = float(subprocess.Popen("cat /sys/block/" + diskname + "/" + partitionname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
+			diskmountoptions = (subprocess.Popen("mount | grep '" + partitionname + "' | tr ' ' '\n'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip().split('\n')
+			if diskmountoptions == ['']:
+				for i in range(0, 5):
+					diskmountoptions.append('')
+			partitionarray.append([partitionname, partitionsize, diskmountoptions[2], diskmountoptions[4], diskmountoptions[5]])
+
+		diskarray.append([diskname, disksize,numpartitions,diskmodel,diskvendor,diskrevision, partitionarray])
+	return diskarray
+
         
     def mobo(self, var):
         # var can be: board_vendor, board_name, bios_vendor, 
@@ -283,6 +309,9 @@ class CPUG:
 	self.gpu_update()
 
 	self.snd_update()
+
+	self.anarray = main().diskinfo()
+	self.storage_update()
         
         
         # Motherboard tab
@@ -376,6 +405,51 @@ class CPUG:
         self.wTree.get_object("sndcardbuffer").set_text(main().sndinfo("sndcards"))
         self.wTree.get_object("pcmbuffer").set_text(main().sndinfo("pcm"))
         self.wTree.get_object("modulesbuffer").set_text(main().sndinfo("modules"))
+
+    def diskcombochanged(self, drivecombo):
+	#sort the partition combobox for the active disk
+	partitioncombo = self.wTree.get_object("partitioncombo")
+	partitioncombo.get_model().clear()
+
+	i = drivecombo.get_active()
+
+	for j in range(0, self.anarray[i][2]):
+		partitioncombo.append_text(self.anarray[i][6][j][0])
+	partitioncombo.set_active(0)
+	#update data with active disk
+	self.wTree.get_object("disksize").set_text(self.blockstoGB(self.anarray[i][1]) + " GB")
+	self.wTree.get_object("diskmodel").set_text(self.anarray[i][3])
+	self.wTree.get_object("diskvendor").set_text(self.anarray[i][4])
+	self.wTree.get_object("diskrev").set_text(self.anarray[i][5])
+
+    def partitioncombochanged(self, partitioncombo, drivecombo):
+	i = drivecombo.get_active()
+	j = partitioncombo.get_active()
+
+	#update data with active partition
+	self.wTree.get_object("partsize").set_text(self.blockstoGB(self.anarray[i][6][j][1]) + " GB")
+	self.wTree.get_object("partmountoptions").set_text(self.anarray[i][6][j][4])
+	self.wTree.get_object("partfstype").set_text(self.anarray[i][6][j][3])
+	self.wTree.get_object("partmount").set_text(self.anarray[i][6][j][2])
+
+
+    def blockstoGB(self, blocks):
+	GB = round((((blocks*512)/1024)/1024)/1024, 2)
+	return str(GB)
+
+    def storage_update(self):
+	drivecombo = self.wTree.get_object("drivecombo")
+	partitioncombo = self.wTree.get_object("partitioncombo")
+
+	for i in range(0, len(self.anarray)):
+		drivecombo.append_text(self.anarray[i][0])
+	drivecombo.set_active(0)
+
+	self.diskcombochanged(drivecombo)
+	self.partitioncombochanged(partitioncombo, drivecombo)
+
+	drivecombo.connect("changed",self.diskcombochanged)
+	partitioncombo.connect("changed",self.partitioncombochanged, drivecombo)
         
     def kill(self, widget):
         print "Quit"
