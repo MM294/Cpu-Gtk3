@@ -160,7 +160,10 @@ class main:
                 return True
             else:
                 return False
-            
+	elif var == 'cpumaxspeed':
+		#horrible dmesg hack, proper way requires root access through dmidecode though
+		return (subprocess.Popen("dmesg | grep 'MHz processor' | sed 's/[A-Za-z]*//g' | cut -d ':' -f 2", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+        
 
 
     def sysdevcpu(self, core, level, kind):
@@ -386,6 +389,7 @@ class CPUG:
         self.wTree.get_object("flags").set_text(main().cpuinfo("flags", index))
         self.wTree.get_object("width").set_text(main().cpuinfo("width", index))
         self.wTree.get_object("kvm").set_active(main().cpuinfo("kvm", index))
+        self.wTree.get_object("coremaxspeed").set_text(main().cpuinfo("cpumaxspeed", index))
         self.wTree.get_object("l1data").set_text(main().sysdevcpu(index, 1, 'Data'))
         self.wTree.get_object("l1inst").set_text(main().sysdevcpu(index, 1, 'Instruction'))
         self.wTree.get_object("l2").set_text(main().sysdevcpu(index, 2, 'Unified'))
