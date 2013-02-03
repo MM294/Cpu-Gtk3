@@ -222,6 +222,8 @@ class main:
         data = self.readfile('/proc/meminfo')
         
         values = {'total' : int(re.findall('^MemTotal:\s*([0-9]*)',data, re.M)[0])/1024,
+		  'swaptotal' : int(re.findall('^SwapTotal:\s*([0-9]*)',data, re.M)[0])/1024,
+		  'swapfree' : int(re.findall('^SwapFree:\s*([0-9]*)',data, re.M)[0])/1024,
                   'free' : int(re.findall('^MemFree:\s*([0-9]*)',data, re.M)[0])/1024,
                   'buffers' : int(re.findall('^Buffers:\s*([0-9]*)',data, re.M)[0])/1024,
                   'cached' : int(re.findall('^Cached:\s*([0-9]*)',data, re.M)[0])/1024,
@@ -232,6 +234,7 @@ class main:
                   }
         values['free'] = values['free'] + values['buffers'] + values['cached']
         values['used'] = values['total'] - values['free']
+        values['swapused'] = values['swaptotal'] - values['swapfree']
         
         return values
 
@@ -349,10 +352,25 @@ class CPUG:
         totalram = values['total']
         usedram = values['used']
         freeram = values['free']
+	swaptotal = values['swaptotal']
+	swapused = values['swapused']
         
         self.wTree.get_object("ramtotal").set_text(str(totalram) + ' MBytes')
         self.wTree.get_object("ramused").set_text(str(usedram) + ' MBytes')
         self.wTree.get_object("ramfree").set_text(str(freeram) + ' MBytes')
+
+        self.wTree.get_object("totalswap").set_text(str(swaptotal) + ' MBytes')
+        self.wTree.get_object("usedswap").set_text(str(swapused) + ' MBytes')
+
+	if swaptotal == 0:
+		swapfraction = swaptotal
+		swappercentage = str(swaptotal) + '%'
+	else:
+        	swapfraction = swapused / swaptotal
+        	swappercentage = str(int(round(swapused * 100.0 / swaptotal))) + '%'
+
+        self.wTree.get_object("usedswapbar").set_fraction(swapfraction)
+        self.wTree.get_object("usedswapbar").set_text(swappercentage)
         
         # RAM progress bars
         usedfraction = (usedram * 1.00) / totalram
@@ -362,8 +380,6 @@ class CPUG:
         
         freefraction = (freeram * 1.00) / totalram
         freepercentage = str(int(round(freeram * 100.0 / totalram))) + '%'
-        self.wTree.get_object("ramfreeprogbar").set_fraction(freefraction)
-        self.wTree.get_object("ramfreeprogbar").set_text(freepercentage)
         
         self.wTree.get_object("ramactive").set_text(str(values['active']) + ' MBytes')
         self.wTree.get_object("raminactive").set_text(str(values['inactive']) + ' MBytes')
