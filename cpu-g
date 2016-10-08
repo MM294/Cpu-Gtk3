@@ -31,12 +31,12 @@ class main:
 	
 	def readfile(self, name):
 		try:
-			f = file(name, 'r')
+			f = open(name, 'r')
 			data = f.read()
 			f.close()
-			return data
+			return(data)
 		except:
-			return 'N/A'
+			return('N/A')
 	
 	
 	
@@ -239,32 +239,34 @@ class main:
 		return values
 
 	def diskinfo(self):
-		numdisks = int(subprocess.Popen("ls /sys/block/ | grep -e 'sd' -e 'sr' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
+		numdisks = int(subprocess.Popen("ls /sys/block/ | grep -e 'sd\|nvme' -e 'sr' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
 		diskarray = []
 		for i in range(0, numdisks):
-			diskname = (subprocess.Popen("ls /sys/block/ | grep -e 'sd' -e 'sr' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
-			disksize = float(subprocess.Popen("cat /sys/block/" + diskname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
+			diskname = (subprocess.Popen("ls /sys/block/ | grep -e 'sd\|nvme' -e 'sr' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+			disksizestr = subprocess.Popen("cat /sys/block/" + diskname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read()
+			disksize = float(disksizestr)
 			diskmodel = (subprocess.Popen("cat /sys/block/" + diskname + "/device/model", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 			diskvendor = (subprocess.Popen("cat /sys/block/" + diskname + "/device/vendor", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 			diskrevision = (subprocess.Popen("cat /sys/block/" + diskname + "/device/rev", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 			disksectorsize = (subprocess.Popen("cat /sys/block/" + diskname + "/queue/hw_sector_size", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
 
-		#get data on partitons on the drive
-		partitionarray = []
-		numpartitions = int(subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
-		if numpartitions == 0: 
-			partitionarray.append([diskname, disksize, '', 'Empty', ''])
-		for i in range(0, numpartitions):			
-			partitionname = (subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
-			partitionsize = float(subprocess.Popen("cat /sys/block/" + diskname + "/" + partitionname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
-			diskmountoptions = (subprocess.Popen("mount | grep '" + partitionname + "' | tr ' ' '\n'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip().split('\n')
-			if diskmountoptions == ['']:
-				for i in range(0, 5):
-					diskmountoptions.append('')
-			partitionarray.append([partitionname, partitionsize, diskmountoptions[2], diskmountoptions[4], diskmountoptions[5]])
+			#get data on partitons on the drive
+			partitionarray = []
+			numpartitions = int(subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | wc -l", stdout=subprocess.PIPE, shell=True).stdout.read())
+			if numpartitions == 0: 
+				partitionarray.append([diskname, disksize, '', 'Empty', ''])
+			for i in range(0, numpartitions):			
+				partitionname = (subprocess.Popen("ls /sys/block/"+ diskname +" | grep -e '"+ diskname +"' | tr ' ' '\n' | sed -n '" + str(i+1) + "p'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip()
+				partitionsize = float(subprocess.Popen("cat /sys/block/" + diskname + "/" + partitionname + "/size", stdout=subprocess.PIPE, shell=True).stdout.read())
+				diskmountoptions = (subprocess.Popen("mount | grep '" + partitionname + "' | tr ' ' '\n'", stdout=subprocess.PIPE, shell=True).stdout.read()).strip().split('\n')
+				if diskmountoptions == ['']:
+					for i in range(0, 5):
+						diskmountoptions.append('')
+				partitionarray.append([partitionname, partitionsize, diskmountoptions[2], diskmountoptions[4], diskmountoptions[5]])
 
-		diskarray.append([diskname, disksize,numpartitions,diskmodel,diskvendor,diskrevision,disksectorsize, partitionarray])
-		return diskarray
+			diskarray.append([diskname, disksize,numpartitions,diskmodel,diskvendor,diskrevision,disksectorsize, partitionarray])
+		print(diskarray)
+		return(diskarray)
 
 		
 	def mobo(self, var):
